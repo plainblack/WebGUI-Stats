@@ -57,6 +57,7 @@ sub www_receiveStats {
     my $session = $self->session;
     my $stats = JSON->new->decode($session->form->get('stats'));
     my $assetTypes = $stats->{assetTypes};
+    delete $stats->{assetTypes};
     my $submission =  WebGUI::AssetCollateral::WgStats->create($session, $stats);
     foreach my $assetType (@{$assetTypes}) {
         WebGUI::AssetCollateral::WgAssetStats->create($session, {
@@ -65,8 +66,15 @@ sub www_receiveStats {
             className       => $assetType->{className},
         });
     }
+    $session->http->setMimeType("text/plain");
+    return "Submission Received\n";
 }
 
+#-------------------------------------------------------------------
+sub www_view {
+	my $self = shift;
+	return $self->getParent->processStyle($self->view);
+}
 
 1;
 

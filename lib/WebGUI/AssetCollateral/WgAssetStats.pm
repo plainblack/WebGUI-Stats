@@ -10,6 +10,7 @@ sub crud_definition {
     my $definition = $class->SUPER::crud_definition($session);
     $definition->{tableName} = 'webgui_asset_stats';
     $definition->{tableKey} = 'assetSubmissionId';
+    $definition->{sequenceKey} = 'submissionId';
     $definition->{properties}{submissionId} = {
             fieldType       => 'guid',
             defaultValue    => undef,
