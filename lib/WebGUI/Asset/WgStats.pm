@@ -48,7 +48,21 @@ sub uninstall {
 #-------------------------------------------------------------------
 sub view {
     my $self = shift;
-    return "Nothing to see here just yet. Still collecting initial data.";
+    my $db = $self->session->db;
+    my $out = q|Total sites reporting data: |.$db->quickScalar("select count(distinct(siteId)) from webgui_stats").q{<br /><br />};
+    foreach my $type (qw(asset user group package)) {
+        $out .= q|Average number of |.$type.q|s per site: |.$db->quickScalar("select sum(".$type."Count) / count(*) from webgui_stats").q{<br />};
+    }
+    $out .= q{<br />};
+    foreach my $type (qw(asset user group package)) {
+        my @growth = $db->buildArray("select max(".$type."Count) - min(".$type."Count) from webgui_stats group by siteId");
+        my $total = 0;
+        ($total += $_) for @growth;
+        my $average = $total / scalar(@growth);
+        $out .= q|Average |.$type.q| growth: |.$average.q{<br />};
+    }
+    $out .= q{<br /><b>This is just some preliminary reporting. Once we have more data to report on, we'll introduce a lot more reports, and graphs!</b>};
+    return $out;
 }
 
 #-------------------------------------------------------------------
