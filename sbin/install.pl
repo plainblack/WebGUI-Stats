@@ -15,6 +15,7 @@ use Pod::Usage;
 use Getopt::Long;
 use WebGUI::Session;
 use WebGUI::Asset::WgStats;
+use WebGUI::Paths;
 
 # Get parameters here, including $help
 GetOptions(
@@ -27,16 +28,15 @@ pod2usage( verbose => 1 ) if $help;
 pod2usage( verbose => 2 ) if $man;
 pod2usage( msg => "Must specify a config file!" ) unless $configFile;  
 
-my $session = start( $webguiRoot, $configFile );
+my $session = start( $configFile );
 WebGUI::Asset::WgStats->install($session);
 finish($session);
 
 
 #----------------------------------------------------------------------------
 sub start {
-    my $webguiRoot  = shift;
     my $configFile  = shift;
-    my $session = WebGUI::Session->open($webguiRoot,$configFile);
+    my $session = WebGUI::Session->open($configFile);
     $session->user({userId=>3});
     return $session;
 }

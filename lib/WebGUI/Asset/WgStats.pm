@@ -1,47 +1,35 @@
 package WebGUI::Asset::WgStats;
 
+use Moose;
+use WebGUI::Definition::Asset;
+extends 'WebGUI::Asset';
+with 'WebGUI::Role::Asset::Installable';
 
-use strict;
-use Tie::IxHash;
-use base ( 'WebGUI::AssetAspect::Installable', 'WebGUI::Asset' );
-use WebGUI::Utility;
 use WebGUI::AssetCollateral::WgStats;
 use WebGUI::AssetCollateral::WgAssetStats;
 use JSON;
 
-#-------------------------------------------------------------------
-sub definition {
-    my $class      = shift;
-    my $session    = shift;
-    my $definition = shift;
-    tie my %properties, 'Tie::IxHash', (
-    );
-    push @{$definition}, {
-        assetName         => 'WebGUI Stats',
-        autoGenerateForms => 1,
-        tableName         => 'WgStats',
-        className         => 'WebGUI::Asset::WgStats',
-        properties        => \%properties,
-        };
-    return $class->SUPER::definition( $session, $definition );
-} 
+define assetName => 'WebGUI Stats';
+define tableName => 'WgStats';
 
 #-------------------------------------------------------------------
-sub install {
+around install => {
+    my $orig = shift;
       my $class     = shift;
       my $session   = shift;
       WebGUI::AssetCollateral::WgStats->crud_createTable($session);
       WebGUI::AssetCollateral::WgAssetStats->crud_createTable($session);
-      $class->next::method( $session );
+      $self->$orig( $session )
 }
 
 #-------------------------------------------------------------------
 sub uninstall {
+    my $orig = shift;
       my $class     = shift;
       my $session   = shift;
       WebGUI::AssetCollateral::WgStats->crud_dropTable($session);
       WebGUI::AssetCollateral::WgAssetStats->crud_dropTable($session);
-      $class->next::method( $session );
+      $class->$orig( $session );
 }
 
 
@@ -72,13 +60,17 @@ sub www_receiveStats {
     my $stats = JSON->new->decode($session->form->get('stats'));
     my $assetTypes = $stats->{assetTypes};
     delete $stats->{assetTypes};
-    my $submission =  WebGUI::AssetCollateral::WgStats->create($session, $stats);
+    my $submission =  WebGUI::AssetCollateral::WgStats->new($session);
+    $submission->update( $stats );
+    $submission->write;
     foreach my $assetType (@{$assetTypes}) {
-        WebGUI::AssetCollateral::WgAssetStats->create($session, {
+        my $stat = WebGUI::AssetCollateral::WgAssetStats->new($session);
+        $stat->update({
             submissionId    => $submission->getId,
             quantity        => $assetType->{quantity},
             className       => $assetType->{className},
         });
+        $stat->write;
     }
     $session->http->setMimeType("text/plain");
     return "Submission Received\n";

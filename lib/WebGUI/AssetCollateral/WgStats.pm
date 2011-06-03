@@ -1,56 +1,50 @@
 package WebGUI::AssetCollateral::WgStats;
 
-use strict;
-use base 'WebGUI::Crud';
+use Moose;
+use WebGUI::Definition::Crud;
+extends 'WebGUI::Crud';
 
+define tableName => 'webgui_stats';
+define tableKey => 'submissionId';
+has submissionId => (
+    fieldType   => 'guid',
+);
 
-#-------------------------------------------------------------------
-sub crud_definition {
-    my ($class, $session) = @_;
-    my $definition = $class->SUPER::crud_definition($session);
-    $definition->{tableName} = 'webgui_stats';
-    $definition->{tableKey} = 'submissionId';
-    $definition->{properties}{siteId} = {
-            fieldType       => 'guid',
-            defaultValue    => undef,
-        };
-    $definition->{properties}{webguiVersion} = {
-            fieldType       => 'text',
-            defaultValue    => undef,
-        };
-    $definition->{properties}{perlVersion} = {
-            fieldType       => 'text',
-            defaultValue    => undef,
-        };
-    $definition->{properties}{apacheVersion} = {
-            fieldType       => 'text',
-            defaultValue    => undef,
-        };
-    $definition->{properties}{osType} = {
-            fieldType       => 'text',
-            defaultValue    => undef,
-        };  
-    $definition->{properties}{userCount} = {
-            fieldType       => 'integer',
-            defaultValue    => undef,
-        };  
-    $definition->{properties}{groupCount} = {
-            fieldType       => 'integer',
-            defaultValue    => undef,
-        };  
-    $definition->{properties}{assetCount} = {
-            fieldType       => 'integer',
-            defaultValue    => undef,
-        };  
-    $definition->{properties}{packageCount} = {
-            fieldType       => 'integer',
-            defaultValue    => undef,
-        };  
-    return $definition;
-}
+property siteId => (
+    fieldType   => 'guid',
+);
 
+property webguiVersion => (
+    fieldType   => 'text',
+);
 
+property perlVersion => (
+    fieldType   => 'text',
+);
 
+property apacheVersion => (
+    fieldType   => 'text',
+);
+
+property osType => (
+    fieldType   => 'text',
+);
+
+property userCount => (
+    fieldType   => 'integer',
+);
+
+property groupCount => (
+    fieldType   => 'integer',
+);
+
+property assetCount => (
+    fieldType => 'integer',
+);
+
+property packageCount => (
+    fieldType => 'integer',
+);
 
 1;
 
