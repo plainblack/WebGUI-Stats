@@ -13,14 +13,14 @@ define assetName => 'WebGUI Stats';
 define tableName => 'WgStats';
 
 #-------------------------------------------------------------------
-around install => {
+around install => sub {
     my $orig = shift;
       my $class     = shift;
       my $session   = shift;
       WebGUI::AssetCollateral::WgStats->crud_createTable($session);
       WebGUI::AssetCollateral::WgAssetStats->crud_createTable($session);
-      $self->$orig( $session )
-}
+      $class->$orig( $session )
+};
 
 #-------------------------------------------------------------------
 sub uninstall {

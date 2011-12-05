@@ -6,7 +6,7 @@ extends 'WebGUI::Crud';
 
 define tableName => 'webgui_stats';
 define tableKey => 'submissionId';
-has submissionId => (
+property submissionId => (
     fieldType   => 'guid',
 );
 
