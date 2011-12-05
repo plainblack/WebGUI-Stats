@@ -6,12 +6,11 @@ extends 'WebGUI::Crud';
 
 define tableName => 'webgui_asset_stats';
 define tableKey  => 'assetSubmissionId';
-has assetSubmissionId => (
+define sequenceKey => 'submissionId';
+property assetSubmissionId => (
     fieldType   => 'text',
 );
-
-define sequenceKey => 'submissionId';
-has submissionId => (
+property submissionId => (
     fieldType   => 'guid',
 );
 
